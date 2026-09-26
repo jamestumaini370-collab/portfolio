@@ -22,17 +22,21 @@
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 17px;
     line-height: 1.6;
   }
   h1, h2, h3 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
     font-weight: 600;
     letter-spacing: -0.01em;
     margin: 0;
   }
   .wrap { max-width: 700px; margin: 0 auto; padding: 0 24px 100px; }
+
+  /* Language switching: show only the active language */
+  html[lang="en"] [data-l="pl"],
+  html[lang="pl"] [data-l="en"] { display: none !important; }
 
   /* Hero band */
   .hero {
@@ -43,7 +47,7 @@
     position: relative;
     overflow: hidden;
   }
-  .hero-inner { max-width: 700px; margin: 0 auto; position: relative; z-index: 2; display: flex; gap: 24px; align-items: center; }
+  .hero-inner { max-width: 700px; margin: 0 auto; position: relative; z-index: 2; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
   .avatar {
     width: 84px; height: 84px; border-radius: 50%;
     background: rgba(255,255,255,0.12);
@@ -51,10 +55,31 @@
     background-size: cover; background-position: center;
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 600;
+    font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 28px; font-weight: 600;
   }
   .hero h1 { font-size: 28px; color: white; }
   .hero p.role { color: var(--amber); font-size: 14px; margin: 6px 0 0; font-weight: 600; letter-spacing: 0.02em; }
+
+  /* EN | PL switch */
+  .lang-switch {
+    margin-left: auto;
+    display: flex;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .lang-switch button {
+    background: transparent;
+    color: var(--paper);
+    border: none;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .lang-switch button[aria-pressed="true"] { background: var(--amber); color: var(--ink); }
+  .lang-switch button:focus-visible { outline: 2px solid white; outline-offset: -2px; }
 
   /* Decorative network dots */
   .hero svg.deco { position: absolute; right: -40px; top: -20px; opacity: 0.35; z-index: 1; }
@@ -121,7 +146,7 @@
   .msg.user { background: var(--ink); color: white; margin-left: auto; }
   .msg.bot { background: var(--paper); border: 1px solid var(--line); }
   #inputRow { display: flex; border-top: 1px solid var(--line); }
-  #userInput { flex: 1; border: none; padding: 13px 16px; font-family: inherit; font-size: 15px; background: transparent; outline: none; }
+  #userInput { flex: 1; border: none; padding: 13px 16px; font-family: inherit; font-size: 15px; background: transparent; outline: none; min-width: 0; }
   #inputRow button { border: none; background: var(--amber); color: var(--ink); font-weight: 600; padding: 0 20px; cursor: pointer; font-family: inherit; font-size: 14px; }
 
   .projects { margin-top: 64px; }
@@ -138,18 +163,18 @@
   .project.blue { border-left-color: var(--blue); }
   .project h3 { font-size: 18px; margin-bottom: 6px; }
   .project p { margin: 0; color: var(--ink-soft); font-size: 15px; }
-  .project img { width: 100%; border-radius: 8px; margin-top: 14px; border: 1px solid var(--line); }
   .project .stack { font-size: 13px; color: var(--teal); margin-top: 10px; font-weight: 500; }
+
+  .demo-gif { max-width: 100%; width: 360px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: block; margin: 16px 0; border: 1px solid var(--line); }
 
   footer { margin-top: 70px; font-size: 15px; color: var(--ink-soft); display: flex; gap: 20px; flex-wrap: wrap; }
   footer a { color: var(--ink); font-weight: 500; }
-.demo-gif { max-width: 100%; width: 360px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: block; margin: 16px 0; }
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <svg class="deco" width="220" height="220" viewBox="0 0 220 220">
+  <svg class="deco" width="220" height="220" viewBox="0 0 220 220" aria-hidden="true">
     <circle cx="40" cy="40" r="4" fill="#E8A33D"/>
     <circle cx="120" cy="30" r="4" fill="#D9695F"/>
     <circle cx="180" cy="90" r="4" fill="#F3F4F1"/>
@@ -164,7 +189,12 @@
     <div class="avatar" style="background-image: url('profile.jpg');">JM</div>
     <div>
       <h1>James Mchunga</h1>
-      <p class="role">AUTOMATION FOR SMALL BUSINESSES · WARSAW</p>
+      <p class="role" data-l="en">AUTOMATION FOR SMALL BUSINESSES · WARSAW</p>
+      <p class="role" data-l="pl">AUTOMATYZACJA DLA MAŁYCH FIRM · WARSZAWA</p>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-set="en" aria-pressed="true">EN</button>
+      <button type="button" data-set="pl" aria-pressed="false">PL</button>
     </div>
   </div>
 </div>
@@ -172,46 +202,71 @@
 <div class="wrap">
 
   <div class="lede">
-    I'm James — I come from a software testing background, and I now build AI chat assistants that handle customer questions and bookings for small businesses. <strong>Below is one running live — try asking it something.</strong>
+    <span data-l="en">I'm James — I come from a software testing background, and I now build AI chat assistants that handle customer questions and bookings for small businesses. <strong>Below is one running live — try asking it something.</strong></span>
+    <span data-l="pl">Nazywam się James — mam doświadczenie w testowaniu oprogramowania, a obecnie tworzę asystentów czatu AI, którzy obsługują pytania klientów i rezerwacje w małych firmach. <strong>Poniżej jeden z nich działa na żywo — zadaj mu pytanie.</strong></span>
   </div>
 
   <div class="pipeline">
-    <div class="step"><div class="label">A customer messages</div><div class="sub">Website, Telegram, WhatsApp</div></div>
+    <div class="step">
+      <div class="label" data-l="en">A customer messages</div>
+      <div class="label" data-l="pl">Klient pisze</div>
+      <div class="sub" data-l="en">Website, Telegram, WhatsApp</div>
+      <div class="sub" data-l="pl">Strona WWW, Telegram, WhatsApp</div>
+    </div>
     <div class="arrow">→</div>
-    <div class="step"><div class="label">The assistant responds</div><div class="sub">Reads intent, checks details</div></div>
+    <div class="step">
+      <div class="label" data-l="en">The assistant responds</div>
+      <div class="label" data-l="pl">Asystent odpowiada</div>
+      <div class="sub" data-l="en">Understands the question, checks details</div>
+      <div class="sub" data-l="pl">Rozumie pytanie, sprawdza szczegóły</div>
+    </div>
     <div class="arrow">→</div>
-    <div class="step"><div class="label">It replies or books</div><div class="sub">Instantly, day or night</div></div>
+    <div class="step">
+      <div class="label" data-l="en">It replies or books</div>
+      <div class="label" data-l="pl">Odpowiada lub rezerwuje</div>
+      <div class="sub" data-l="en">Instantly, day or night</div>
+      <div class="sub" data-l="pl">Od razu, o każdej porze</div>
+    </div>
   </div>
 
   <div class="demo-frame">
-    <div class="demo-head"><span><span class="dot"></span>Salon booking assistant — live</span><span>●</span></div>
+    <div class="demo-head">
+      <span><span class="dot"></span><span data-l="en">Salon booking assistant — live</span><span data-l="pl">Asystent rezerwacji salonu — na żywo</span></span>
+      <span>●</span>
+    </div>
     <div id="messages"></div>
     <div id="inputRow">
       <input type="text" id="userInput" placeholder="Ask about prices, booking, hours…">
-      <button onclick="sendMessage()">Send</button>
+      <button type="button" onclick="sendMessage()"><span data-l="en">Send</span><span data-l="pl">Wyślij</span></button>
     </div>
   </div>
 
   <div class="projects">
-    <h2>Also built</h2>
+    <h2><span data-l="en">Also built</span><span data-l="pl">Inne projekty</span></h2>
 
     <div class="project coral">
-      <h3>Local services booking bot</h3>
-      <p>A multi-turn Telegram assistant built as a proof of concept for a services marketplace connecting customers with local businesses. Remembers context across a conversation to collect service, area, and preferred time.</p>
-      <div class="stack">n8n · Claude API · Telegram</div>
+      <h3 data-l="en">Local services booking bot</h3>
+      <h3 data-l="pl">Bot do rezerwacji usług lokalnych</h3>
+      <p data-l="en">A multi-turn Telegram assistant built as a proof of concept for a services marketplace connecting customers with local businesses. Remembers context across a conversation to collect service, area, and preferred time.</p>
+      <p data-l="pl">Asystent na Telegramie prowadzący wieloetapową rozmowę, zbudowany jako prototyp platformy łączącej klientów z lokalnymi firmami. Pamięta kontekst rozmowy, aby zebrać informacje o usłudze, okolicy i preferowanym terminie.</p>
+      <div class="stack" data-l="en">Runs on Telegram, 24/7</div>
+      <div class="stack" data-l="pl">Działa na Telegramie, 24/7</div>
     </div>
 
     <div class="project blue">
-      <h3>Fitness studio FAQ &amp; booking bot</h3>
-      <p>Answers common questions and helps schedule trial sessions automatically for a personal training business — built to cut down on repetitive messages after hours.</p>
-<img src="fitness-bot-demo.gif" alt="Telegram fitness bot demo" class="demo-gif" loading="lazy">
-      <img src="fitness-demo.gif" alt="Fitness bot demo" onerror="this.style.display='none'">
-      <div class="stack">n8n · Claude API · Telegram</div>
+      <h3 data-l="en">Fitness studio FAQ &amp; booking bot</h3>
+      <h3 data-l="pl">Bot FAQ i rezerwacji dla studia fitness</h3>
+      <p data-l="en">Answers common questions and helps schedule trial sessions automatically for a personal training business — built to cut down on repetitive messages after hours.</p>
+      <p data-l="pl">Odpowiada na najczęstsze pytania i automatycznie umawia treningi próbne dla trenera personalnego — stworzony, by ograniczyć powtarzalne wiadomości po godzinach pracy.</p>
+      <img src="fitness-bot-demo.gif" alt="Telegram fitness bot demo" class="demo-gif" loading="lazy">
+      <div class="stack" data-l="en">Runs on Telegram, 24/7</div>
+      <div class="stack" data-l="pl">Działa na Telegramie, 24/7</div>
     </div>
   </div>
 
   <footer>
-    <span>Speaks English, Polish &amp; Swahili</span>
+    <span data-l="en">Speaks English, Polish &amp; Swahili</span>
+    <span data-l="pl">Mówię po angielsku, polsku i suahili</span>
     <a href="mailto:jamestumaini370@gmail.com">jamestumaini370@gmail.com</a>
     <a href="https://wa.me/48790285062">WhatsApp</a>
   </footer>
@@ -222,6 +277,48 @@
   const WEBHOOK_URL = "https://mchunga.app.n8n.cloud/webhook/c60e1eea-84d8-4f34-93c9-d4709a6449be";
   const sessionId = "portfolio-" + Math.random().toString(36).substring(2, 10);
 
+  // ---- Language ----
+  const TEXT = {
+    en: {
+      title: "James Mchunga — Automation for small businesses",
+      placeholder: "Ask about prices, booking, hours…",
+      error: "The assistant didn't respond. Check your connection and try again."
+    },
+    pl: {
+      title: "James Mchunga — Automatyzacja dla małych firm",
+      placeholder: "Zapytaj o ceny, rezerwację, godziny…",
+      error: "Asystent nie odpowiedział. Sprawdź połączenie i spróbuj ponownie."
+    }
+  };
+  let currentLang = "en";
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.title = TEXT[lang].title;
+    document.getElementById("userInput").placeholder = TEXT[lang].placeholder;
+    document.querySelectorAll(".lang-switch button").forEach(b => {
+      b.setAttribute("aria-pressed", b.dataset.set === lang ? "true" : "false");
+    });
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  }
+
+  document.querySelectorAll(".lang-switch button").forEach(b => {
+    b.addEventListener("click", () => setLang(b.dataset.set));
+  });
+
+  // Start in the visitor's saved choice, otherwise Polish for Polish browsers
+  let startLang = "en";
+  try {
+    const saved = localStorage.getItem("lang");
+    if (saved === "en" || saved === "pl") startLang = saved;
+    else if ((navigator.language || "").toLowerCase().startsWith("pl")) startLang = "pl";
+  } catch (e) {
+    if ((navigator.language || "").toLowerCase().startsWith("pl")) startLang = "pl";
+  }
+  setLang(startLang);
+
+  // ---- Chat ----
   function addMessage(text, sender) {
     const div = document.createElement("div");
     div.className = "msg " + sender;
@@ -237,13 +334,17 @@
     addMessage(text, "user");
     input.value = "";
 
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, sessionId: sessionId }),
-    });
-    const data = await res.json();
-    addMessage(data.reply, "bot");
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, sessionId: sessionId }),
+      });
+      const data = await res.json();
+      addMessage(data.reply || TEXT[currentLang].error, "bot");
+    } catch (e) {
+      addMessage(TEXT[currentLang].error, "bot");
+    }
   }
 
   document.getElementById("userInput").addEventListener("keypress", (e) => {
